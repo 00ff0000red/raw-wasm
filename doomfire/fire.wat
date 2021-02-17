@@ -30,24 +30,12 @@
 (elem func $run)
 
 (func $setup
-	(local $i i32)
+	;; Fill bottom row with color 36, (R=0xFF, G=0xFF, B=0xFF).
 
-	;; Fill bottom row with color 36, (R=0xff, G=0xff, B=0xff).
+	i32.const 53439
+	i32.const 36
 	i32.const 320
-	local.set $i
-
-	loop
-    	;; memory[53440 - 1 + i] = 36
-		local.get $i
-		i32.const 36
-		i32.store8 offset=53439
-		;; loop if --i != 0
-		local.get $i
-		i32.const 1
-		i32.sub
-		local.tee $i
-		br_if 0
-	end
+	memory.fill
 
 	ref.func $run
 	return_call $globalThis::requestAnimationFrame
@@ -81,7 +69,7 @@
 				i32.and
 				local.tee $randIdx
 
-				;; memory[i - randIdx - 319] = pixel - (randIdx & 1)
+				;; memory[i - (randIdx = round(random() * 3.0) & 3) - 319] = pixel - (randIdx & 1)
 				i32.sub
 				i32.const 319
 				i32.sub
@@ -97,8 +85,8 @@
 				i32.const 320
 				i32.sub
 				i32.const 0
-			end ;; if end
-			i32.store8
+			end ;; end if
+			i32.store8 ;; offset=-320?
 
 			;; loop if i < 53760 - 320
 			local.get $i
@@ -121,14 +109,12 @@
 	i32.const 53760
 	local.set $i
 	loop
-		;; --i
 		local.get $i
 		i32.const 1
 		i32.sub
-		local.set $i
+		local.tee $i
 
-		;; memory[53760 + (i << 2)] = memory[268800 + (memory[i] << 2)]
-		local.get $i
+		;; memory[53760 + (--i << 2)] = memory[268800 + (memory[i] << 2)]
 		i32.const 2
 		i32.shl
 		local.get $i
@@ -143,6 +129,12 @@
 		local.get $i
 		br_if 0
 	end
+	(;
+		i32.const 53760
+		i32.const 268800
+		i32.const 53759 ;; (53760 - 1)
+		memory.copy
+	;)
 
 	call $local::putImageData
 
