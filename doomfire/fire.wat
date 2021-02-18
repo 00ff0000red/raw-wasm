@@ -30,7 +30,7 @@
 (elem func $run)
 
 (func $setup
-	;; Fill bottom row with color 36, (R=0xFF, G=0xFF, B=0xFF).
+	;; Fill bottom row with color 36, (R=0xff, G=0xff, B=0xff).
 
 	i32.const 53439
 	i32.const 36
@@ -132,7 +132,7 @@
 	(;
 		i32.const 53760
 		i32.const 268800
-		i32.const 53759 ;; (53760 - 1)
+		i32.const 53759 << 2 ;; (53760 - 1)
 		memory.copy
 	;)
 
