@@ -39,7 +39,7 @@ const imageData = new ImageData(
 
 instantiateStreaming(
 	fetch(
-		"./main.wasm", {
+		"./fire.wasm", {
 			mode		: "same-origin",
 			credentials	: "omit",
 			cache		: "default",
